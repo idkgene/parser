@@ -1,13 +1,5 @@
-// ==================================================================
-// IMPORT MODULES
-// ==================================================================
-
 import * as T from './types';
 import * as AST from './ast';
-
-// ==================================================================
-// TYPE DECLARATIONS
-// ==================================================================
 
 export interface ITokenizerOptions {
   tokenizeComments?: boolean;
@@ -102,10 +94,6 @@ enum EChar {
   TILDA = 126,
 }
 
-// ==================================================================
-// GLOBAL HELPER FUNCTIONS
-// ==================================================================
-
 function isWhiteSpace(c: number): boolean {
   return (
     c === EChar.SPACE ||
@@ -159,13 +147,6 @@ function isHexDigit(c: number): boolean {
   );
 }
 
-/*
-function isSurrogate(c: number): boolean
-{
-	return 0xd800 <= c && c <= 0xdfff;
-}
-*/
-
 function isEscape(c: string): boolean {
   return c !== undefined && c[0] === '\\' && c[1] !== '\n';
 }
@@ -173,10 +154,6 @@ function isEscape(c: string): boolean {
 /**
  * This section describes how to check if three code points would start an identifier.
  * Note: This algorithm will not consume any additional code points.
- *
- * @returns {boolean}
- *
- * @url http://www.w3.org/TR/css3-syntax/#check-if-three-code-points-would-start-an-identifier
  */
 function wouldStartIdentifier(s: string, pos: number): boolean {
   var cp = s.charCodeAt(pos);
@@ -191,17 +168,12 @@ function wouldStartIdentifier(s: string, pos: number): boolean {
   // If the first and second code points are a valid escape, return true.
   if (cp === EChar.REVERSE_SOLIDUS) return isEscape(s.substr(pos, 2));
 
-  // Otherwise, return false.
   return false;
 }
 
 /**
  * This section describes how to check if three code points would start a number.
  * Note: This algorithm will not consume any additional code points.
- *
- * @returns {boolean}
- *
- * @url http://www.w3.org/TR/css3-syntax/#starts-with-a-number
  */
 function wouldStartNumber(s: string, pos: number): boolean {
   var c: number = s.charCodeAt(pos),
@@ -217,7 +189,6 @@ function wouldStartNumber(s: string, pos: number): boolean {
     // and the third code point is a digit, return true.
     if (d === EChar.DOT && isDigit(s.charCodeAt(pos + 2))) return true;
 
-    // Otherwise, return false.
     return false;
   }
 
@@ -362,10 +333,6 @@ function isSignificantWhitespace(t1: Token, t2: Token): boolean {
 
   return false;
 }
-
-// ==================================================================
-// TOKENIZER IMPLEMENTATION
-// ==================================================================
 
 export class Token implements T.INode {
   token: EToken;
@@ -683,8 +650,6 @@ export class Tokenizer {
    * Returns the next token in the token stream.
    * Leading and trailing whitespaces and comments of a token are returned
    * in the leadingTrivia and trailingTrivia properties of the token.
-   *
-   * @returns {Token}
    */
   nextToken(): Token {
     var leadingTrivia = [],
@@ -778,15 +743,6 @@ export class Tokenizer {
 
   /**
    * Constructs a new token.
-   *
-   * @param token
-   * @param src
-   * @param value
-   * @param unit
-   * @param type
-   * @param start
-   * @param end
-   * @returns {Token}
    */
   private token(
     token: number,
@@ -817,8 +773,6 @@ export class Tokenizer {
   /**
    * Returns the next token in the stream.
    * Whitespaces and comments are returned as separate tokens.
-   *
-   * @returns {IToken}
    */
   private getNextToken(): Token {
     var c: string,
@@ -1095,11 +1049,6 @@ export class Tokenizer {
   /**
    * This section describes how to check if two code points are a valid escape.
    * Note: This algorithm will not consume any additional code point.
-   *
-   * @param c
-   * @returns {boolean}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#check-if-two-code-points-are-a-valid-escape
    */
   private validEscape(c?: string): boolean {
     if (c !== undefined) return isEscape(c + this._src[this._pos]);
@@ -1109,10 +1058,6 @@ export class Tokenizer {
   /**
    * This section describes how to check if three code points would start an identifier.
    * Note: This algorithm will not consume any additional code points.
-   *
-   * @returns {boolean}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#check-if-three-code-points-would-start-an-identifier
    */
   private wouldStartIdentifier(): boolean {
     return wouldStartIdentifier(this._src, this._pos);
@@ -1121,10 +1066,6 @@ export class Tokenizer {
   /**
    * This section describes how to check if three code points would start a number.
    * Note: This algorithm will not consume any additional code points.
-   *
-   * @returns {boolean}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#starts-with-a-number
    */
   private wouldStartNumber(): boolean {
     return wouldStartNumber(this._src, this._pos);
@@ -1151,10 +1092,6 @@ export class Tokenizer {
    * It assumes that the U+005C REVERSE SOLIDUS (\) has already been consumed
    * and that the next input code point has already been verified to not
    * be a newline. It will return a code point.
-   *
-   * @returns {string}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#consume-an-escaped-code-point
    */
   private consumeEscape(): string {
     var s: string,
@@ -1173,13 +1110,6 @@ export class Tokenizer {
       if (isWhiteSpace(this._src.charCodeAt(this._pos + 1)))
         s += this.nextChar();
 
-      /*
-			num = parseInt(s, 16);
-			if (num === 0 || isSurrogate(num) || num >= 0x10ffff)
-				return '\ufffd';
-
-			return String.fromCharCode(num);
-			*/
       return s;
     }
 
@@ -1198,10 +1128,6 @@ export class Tokenizer {
    * constitute an <ident-token>.
    * If that is the intended use, ensure that the stream starts with an identifier
    * before calling this algorithm.
-   *
-   * @returns {string}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#consume-a-name
    */
   private consumeName(): string {
     var s = this._src[this._pos],
@@ -1226,10 +1152,6 @@ export class Tokenizer {
    * code points that are necessary to ensure a number can be obtained from
    * the stream. Ensure that the stream starts with a number before calling
    * this algorithm.
-   *
-   * @returns {string}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#consume-a-number
    */
   private consumeNumber(): string {
     var s = '',
@@ -1286,10 +1208,6 @@ export class Tokenizer {
   /**
    * This section describes how to consume a numeric token from a stream of code points.
    * It returns either a <number-token>, <percentage-token>, or <dimension-token>.
-   *
-   * @returns {IToken}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#consume-a-numeric-token
    */
   private consumeNumeric(): Token {
     // Consume a number.
@@ -1326,10 +1244,6 @@ export class Tokenizer {
   /**
    * This section describes how to consume an ident-like token from a stream of code points.
    * It returns an <ident-token>, <function-token>, <url-token>, or <bad-url-token>.
-   *
-   * @returns {IToken}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#consume-an-ident-like-token
    */
   private consumeIdentLike(): Token {
     // Consume a name.
@@ -1360,12 +1274,6 @@ export class Tokenizer {
   /**
    * This section describes how to consume a string token from a stream of code points.
    * It returns either a <string-token> or <bad-string-token>.
-   *
-   * @param end The string end character
-   * @param cpEnd The string end code point
-   * @returns {IToken}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#consume-a-string-token
    */
   private consumeString(end: string, cpEnd: number): Token {
     var s = '',
@@ -1413,10 +1321,6 @@ export class Tokenizer {
    * It returns either a <url-token> or a <bad-url-token>.
    *
    * Note: This algorithm assumes that the initial "url(" has already been consumed.
-   *
-   * @returns {IToken}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#consume-a-url-token
    */
   private consumeURL(fnxName: string): Token {
     var s: string,
@@ -1536,10 +1440,6 @@ export class Tokenizer {
    * of a <bad-url-token> rather than a <url-token>.
    * It returns nothing; its sole use is to consume enough of the input stream to reach
    * a recovery point where normal tokenizing can resume.
-   *
-   * @returns {IToken}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#consume-the-remnants-of-a-bad-url
    */
   private consumeBadURLRemnants(): Token {
     var c: string, cp: number;
@@ -1563,11 +1463,6 @@ export class Tokenizer {
    *
    * Note: This algorithm assumes that the initial "u+" has been consumed,
    * and the next code point verified to be a hex digit or a "?".
-   *
-   * @param start The start string of the unicode range (e.g., "U+")
-   * @returns {IToken}
-   *
-   * @url http://www.w3.org/TR/css3-syntax/#consume-a-unicode-range-token
    */
   private consumeUnicodeRange(start: string): Token {
     var s = '',

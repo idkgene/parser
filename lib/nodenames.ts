@@ -2,7 +2,7 @@ import * as T from './types';
 import * as AST from './ast';
 import * as Tokenizer from './tokenizer';
 
-export function getNodeName(node: T.INode): string {
+export function getNodeName(node: T.INode): string | undefined {
   if (node instanceof Tokenizer.Token) return 'Token';
   if (node instanceof AST.StyleSheet) return 'StyleSheet';
   if (node instanceof AST.RuleList) return 'RuleList';

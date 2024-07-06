@@ -1,16 +1,7 @@
-// ==================================================================
-// IMPORT MODULES
-// ==================================================================
-
 import * as T from './types';
 import * as Tokenizer from './tokenizer';
 import * as Parser from './parser';
 import * as Utilities from './utilities';
-
-
-// ==================================================================
-// TYPE DECLARATIONS
-// ==================================================================
 
 export interface IComponentValue extends T.INode
 {

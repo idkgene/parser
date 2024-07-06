@@ -3,8 +3,6 @@ import * as Tokenizer from './tokenizer';
 
 /**
  * Converts the trivia tokens of "node" to leading trivia (rather than trailing trivia).
- *
- * @param node
  */
 export function convertToLeadingTrivia(node: T.INode): void {
   var tokens = node.getTokens(),

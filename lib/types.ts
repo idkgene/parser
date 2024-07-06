@@ -1,10 +1,6 @@
 import * as Tokenizer from './tokenizer';
 import * as AST from './ast';
 
-// ==================================================================
-// TYPE DECLARATIONS
-// ==================================================================
-
 export interface INode {
   range: ISourceRange;
 

@@ -9,71 +9,73 @@ class RangeAdapter {
     return styleSheet.range;
   }
 
-  /**
-   * Creates the range from the first token after the opening curly brace
-   * until the last token before the closing curly brace of a declaration list,
-   * as expected by the inspector.
-   *
-   * @param declarations
-   * @returns {T.ISourceRange}
-   */
   static DeclarationList(declarations: AST.DeclarationList): T.ISourceRange {
-    var lenDeclarations = declarations.getLength(),
-      firstRange = declarations.range,
-      lastRange = declarations.range,
-      lbrace = declarations.getLBrace(),
-      rbrace = declarations.getRBrace(),
-      firstTrailing = lbrace && lbrace.trailingTrivia,
-      firstLeading: Tokenizer.Token[],
-      lastLeading: Tokenizer.Token[],
-      lastTrailing: Tokenizer.Token[],
-      tokens: Tokenizer.Token[],
-      firstToken: Tokenizer.Token,
-      lastToken: Tokenizer.Token,
-      lenTokens: number;
+    const lenDeclarations = declarations.getLength();
+    let firstRange = declarations.range;
+    let lastRange = declarations.range;
+    const lbrace = declarations.getLBrace();
+    const rbrace = declarations.getRBrace();
+    const firstTrailing = lbrace?.trailingTrivia;
+    let firstLeading: Tokenizer.Token[];
+    let lastLeading: Tokenizer.Token[];
+    let lastTrailing: Tokenizer.Token[];
+    let tokens: Tokenizer.Token[];
+    let firstToken: Tokenizer.Token;
+    let lastToken: Tokenizer.Token;
+    let lenTokens: number;
 
-    if (firstTrailing && firstTrailing.length > 0)
+    if (firstTrailing && firstTrailing.length > 0) {
       firstRange = firstTrailing[0].range;
-    else if (lenDeclarations === 0)
+    } else if (lenDeclarations === 0 && lbrace) {
       firstRange = new AST.SourceRange(
         lbrace.range.endLine,
         lbrace.range.endColumn,
         0,
         0,
       );
-    else if (lenDeclarations > 0) {
-      tokens = (<AST.Declaration>declarations[0]).getTokens();
-      if (tokens.length > 0) {
-        firstToken = tokens[0];
-        firstLeading = firstToken.leadingTrivia;
+    } else if (lenDeclarations > 0) {
+      const firstDeclaration = declarations.getDeclaration(0);
+      if (firstDeclaration) {
+        tokens = firstDeclaration.getTokens();
+        if (tokens.length > 0) {
+          firstToken = tokens[0];
+          firstLeading = firstToken.leadingTrivia;
 
-        if (firstLeading && firstLeading.length > 0)
-          firstRange = firstLeading[0].range;
-        else firstRange = firstToken.range;
+          if (firstLeading && firstLeading.length > 0) {
+            firstRange = firstLeading[0].range;
+          } else {
+            firstRange = firstToken.range;
+          }
+        }
       }
     }
 
-    lastLeading = rbrace && rbrace.leadingTrivia;
-    if (lastLeading && lastLeading.length > 0)
+    lastLeading = rbrace?.leadingTrivia;
+    if (lastLeading && lastLeading.length > 0) {
       lastRange = lastLeading[lastLeading.length - 1].range;
-    else if (lenDeclarations === 0)
+    } else if (lenDeclarations === 0 && rbrace) {
       lastRange = new AST.SourceRange(
         0,
         0,
         rbrace.range.startLine,
         rbrace.range.startColumn,
       );
-    else if (lenDeclarations > 0) {
-      tokens = (<AST.Declaration>declarations[lenDeclarations - 1]).getTokens();
-      lenTokens = tokens.length;
+    } else if (lenDeclarations > 0) {
+      const lastDeclaration = declarations.getDeclaration(lenDeclarations - 1);
+      if (lastDeclaration) {
+        tokens = lastDeclaration.getTokens();
+        lenTokens = tokens.length;
 
-      if (lenTokens > 0) {
-        lastToken = tokens[lenTokens - 1];
-        lastTrailing = lastToken.trailingTrivia;
+        if (lenTokens > 0) {
+          lastToken = tokens[lenTokens - 1];
+          lastTrailing = lastToken.trailingTrivia;
 
-        if (lastTrailing && lastTrailing.length > 0)
-          lastRange = lastTrailing[lastTrailing.length - 1].range;
-        else lastRange = lastToken.range;
+          if (lastTrailing && lastTrailing.length > 0) {
+            lastRange = lastTrailing[lastTrailing.length - 1].range;
+          } else {
+            lastRange = lastToken.range;
+          }
+        }
       }
     }
 
@@ -85,33 +87,17 @@ class RangeAdapter {
     );
   }
 
-  /**
-   * Returns the range of the token "token" excluding any leading and trailing trivia.
-   *
-   * @param token
-   * @returns {T.ISourceRange}
-   */
   static Token(token: Tokenizer.Token): T.ISourceRange {
     return getNoTriviaRange(token);
   }
 
-  /**
-   * Returns the range excluding any leading and trailing trivia.
-   *
-   * @param node
-   * @returns {T.ISourceRange}
-   */
   static default(node: AST.ASTNode): T.ISourceRange {
-    return getNoTriviaRange(node) || node.range;
+    const range = getNoTriviaRange(node);
+    return range ? range : node.range;
   }
 }
-
 /**
  * Finds the range from "start" to "end", excluding any leading or trailing trivia.
- *
- * @param start
- * @param end
- * @returns {T.ISourceRange}
  */
 export function getNoTriviaRange(
   start: T.INode,
@@ -164,11 +150,6 @@ export function getNoTriviaRange(
   return range;
 }
 
-/**
- *
- * @param node
- * @returns {T.ISourceRange}
- */
 export function getRange(node: T.INode): T.ISourceRange {
   var adapter = RangeAdapter[NodeNames.getNodeName(node)];
   return adapter
@@ -178,12 +159,6 @@ export function getRange(node: T.INode): T.ISourceRange {
       : node.range;
 }
 
-/**
- *
- * @param node
- * @param range
- * @returns {string}
- */
 export function getText(node: T.INode, range: T.ISourceRange): string {
   return CSSUtilities.getTextFromRange(
     node.toString(),

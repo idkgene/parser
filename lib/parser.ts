@@ -1,16 +1,8 @@
-// ==================================================================
-// IMPORT MODULES
-// ==================================================================
-
 import * as T from './types';
 import * as AST from './ast';
 import * as Tokenizer from './tokenizer';
 import * as Utilities from './utilities';
 import * as TriviaConverter from './trivia-converter';
-
-// ==================================================================
-// TYPE DECLARATIONS
-// ==================================================================
 
 export interface IParseOptions extends Tokenizer.ITokenizerOptions {
   preferLeadingTrivia?: boolean;
@@ -146,10 +138,6 @@ export function parseDeclaration(
   return ret;
 }
 
-// ==================================================================
-// PARSER IMPLEMENTATION
-// ==================================================================
-
 export var atRules: IAtRuleSpec[] = <IAtRuleSpec[]>[];
 
 function initAtRules() {
@@ -205,8 +193,6 @@ export class Parser {
 
   /**
    * Parses a style sheet.
-   *
-   * @returns {AST.StyleSheet}
    */
   parseStyleSheet(): AST.StyleSheet {
     var cdo: Tokenizer.Token = null,
@@ -384,8 +370,6 @@ export class Parser {
 
   /**
    * Parses an (arbitrary) @rule.
-   *
-   * @returns {AST.AtRule}
    */
   parseAtRule(): AST.AtRule {
     var atKeyword = this._currentToken,
@@ -610,9 +594,6 @@ export class Parser {
   /**
    * Parses the trailing tokens of the current token for disabled declarations
    * (declarations which are commented out in the source code).
-   *
-   * @param token
-   * @returns {*}
    */
   parseTrailingTokensForDisabledDeclarations(
     token: Tokenizer.Token,
@@ -744,8 +725,6 @@ export class Parser {
 
   /**
    * Parses a list of selectors.
-   *
-   * @returns {AST.SelectorList}
    */
   parseSelectorList(): AST.SelectorList {
     var selector: AST.Selector,
@@ -770,8 +749,6 @@ export class Parser {
 
   /**
    * Parses a single selector.
-   *
-   * @returns {AST.Selector}
    */
   parseSelector(): AST.Selector {
     var t: Tokenizer.Token,
@@ -898,14 +875,6 @@ export class Parser {
         }
       }
 
-      /*
-			values = this.parseComponentValueList(Tokenizer.EToken.COMMA, Tokenizer.EToken.LBRACE);
-			if (this._currentToken.token === Tokenizer.EToken.COMMA)
-			{
-				separator = this._currentToken;
-				this.nextToken();
-			}
-			*/
     } catch (e) {
       return AST.Selector.fromErrorTokens(
         this.cleanup(e, [Tokenizer.EToken.COMMA], [Tokenizer.EToken.LBRACE]),
@@ -919,8 +888,6 @@ export class Parser {
 
   /**
    * Parses a list of component values.
-   *
-   * @returns {AST.ComponentValueList}
    */
   parseComponentValueList(
     ...endTokens: Tokenizer.EToken[]
@@ -1106,8 +1073,6 @@ export class Parser {
 
   /**
    * Returns the next token in the token stream.
-   *
-   * @returns {IToken}
    */
   private nextToken(): Tokenizer.Token {
     return (this._currentToken = this._tokenizer.nextToken());
@@ -1118,8 +1083,6 @@ export class Parser {
    * as arguments to the method.
    * If the current token doesn't match this specification, an exception
    * (of type IParseError) is thrown.
-   *
-   * @param tokens
    */
   private expect(...args: any[]): void {
     var tokens: Tokenizer.EToken[] = [],
@@ -1153,9 +1116,6 @@ export class Parser {
   /**
    * Concatenates the AST nodes "nodes" to the ones contained in the parse error object
    * "e" and re-throws the exception.
-   *
-   * @param e
-   * @param nodes
    */
   private rethrow(e: IParseError, nodes: T.INode[]): void {
     // prepend the already parsed values to the "parsedNodes" of the error
@@ -1170,10 +1130,6 @@ export class Parser {
   /**
    * Cleans up the token stream by consuming all the tokens until "endToken" is found.
    * Adds all the tokens encountered until then to the epilogue of the current entity.
-   *
-   * @param e
-   * @param endTokens
-   * @param nextTokens
    */
   private cleanup(
     e: IParseError,
@@ -1224,9 +1180,6 @@ export class Parser {
    * Finds the specification for the @rule with @-keyword "atKeyword".
    * If no rule has been registered (in the global variable "atRules"),
    * null is returned.
-   *
-   * @param atKeyword
-   * @returns {*}
    */
   private getAtRuleSpec(atKeyword: Tokenizer.Token): IAtRuleSpec {
     var value = atKeyword.value,

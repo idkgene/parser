@@ -1,7 +1,3 @@
-// ==================================================================
-// IMPORT MODULES
-// ==================================================================
-
 import * as T from './types';
 import * as AST from './ast';
 import * as Tokenizer from './tokenizer';
@@ -83,9 +79,6 @@ export function copyRange(src: T.INode, dst: T.INode): void {
 
 /**
  * Inserts "insertRange" into "range" and updates its start/end lines/columns.
- *
- * @param range The range to update
- * @param insertRange The range to insert into "range"
  */
 export function insertRange(
   range: T.ISourceRange,
@@ -121,9 +114,6 @@ export function insertRange(
 
 /**
  * Deletes "deleteRange" from "range" and updates its start/end lines/columns.
- *
- * @param range The range to update
- * @param deleteRange The range to remove from "range"
  */
 export function deleteRange(
   range: T.ISourceRange,
@@ -375,25 +365,6 @@ export function offsetRange(
 
     // update children
     for (i = 0; i < len; i++) offsetRecursive(children[i]);
-
-    /*
-		// update trivia
-		if (updateTrivia && (node instanceof Tokenizer.Token))
-		{
-			if ((<Tokenizer.Token> node).leadingTrivia)
-			{
-				lenTrivia = (<Tokenizer.Token> node).leadingTrivia.length;
-				for (j = 0; j < lenTrivia; j++)
-					offsetRecursive((<Tokenizer.Token> node).leadingTrivia[j], false);
-			}
-
-			if ((<Tokenizer.Token> node).trailingTrivia)
-			{
-				lenTrivia = (<Tokenizer.Token> node).trailingTrivia.length;
-				for (j = 0; j < lenTrivia; j++)
-					offsetRecursive((<Tokenizer.Token> node).trailingTrivia[j], false);
-			}
-		}*/
   };
 
   if (lineOffset !== 0 || columnOffset !== 0) offsetRecursive(ast);
@@ -437,10 +408,6 @@ export function replaceTextInRange(
 
 /**
  * Computes the range "source" relative to "target".
- *
- * @param source
- * @param target
- * @returns {T.ISourceRange}
  */
 export function relativeRange(
   source: T.ISourceRange,
