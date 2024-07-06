@@ -3,10 +3,9 @@ import * as AST from './ast';
 import * as RangeAdapter from './inspector-rangeadapter';
 
 export function toJSON(node: T.INode): any {
-  return node.walk(function (
+  const walker: AST.IASTWalker = function (
     ast: T.INode,
     descend: () => any[],
-    walker: AST.IASTWalker,
   ): any {
     var range: T.ISourceRange;
 
@@ -63,9 +62,9 @@ export function toJSON(node: T.INode): any {
     }
 
     if (ast instanceof AST.RuleList) {
-      var result = [],
-        ret = descend(),
-        len = ret.length;
+      var result: any[] = [];
+      var ret = descend();
+      var len = ret.length;
 
       // flatten the result and remove "null" occurrences
       for (var i = 0; i < len; i++) {
@@ -78,5 +77,7 @@ export function toJSON(node: T.INode): any {
 
       return result;
     }
-  });
+  };
+
+  return node.walk(walker);
 }
