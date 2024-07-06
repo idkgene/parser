@@ -5,110 +5,104 @@ import * as Utilities from './utilities';
 
 export function beautify(node: T.INode) {
   var level = 0,
-    prevAst: T.INode = null,
-    prevRet: string = null,
+    prevAst: T.INode | null = null,
+    prevRet: string = '',
     newline = function () {
       var s = '\n';
       for (var i = 0; i < level; i++) s += '\t';
       return s;
     };
 
-  return Utilities.trim(
-    node.walk(function (
-      ast: T.INode,
-      descend: () => any[],
-      walker: AST.IASTWalker,
-    ): any {
-      var ret: string, token: Tokenizer.EToken;
+  const walker: AST.IASTWalker = function (
+    ast: T.INode,
+    descend: () => any[],
+  ): any {
+    var ret: string, token: Tokenizer.EToken;
 
-      // generic result for nodes with errors
-      if (ast instanceof AST.ASTNode && (<AST.ASTNode>ast).hasError())
-        ret = (<AST.ASTNode>ast).errorTokensToString();
-      // beautify tokens
-      else if (ast instanceof Tokenizer.Token) {
-        token = (<Tokenizer.Token>ast).token;
-        ret = beautifyToken(<Tokenizer.Token>ast, prevRet);
+    // generic result for nodes with errors
+    if (ast instanceof AST.ASTNode && (<AST.ASTNode>ast).hasError())
+      ret = (<AST.ASTNode>ast).errorTokensToString();
+    // beautify tokens
+    else if (ast instanceof Tokenizer.Token) {
+      token = (<Tokenizer.Token>ast).token;
+      ret = beautifyToken(<Tokenizer.Token>ast, prevRet);
 
-        if (token === Tokenizer.EToken.LBRACE) {
-          level++;
-          ret += newline();
-        } else if (token === Tokenizer.EToken.RBRACE) {
-          level--;
-          ret = newline() + ret + newline();
-        }
-      }
-
-      // selector combinators (white spaces, '+', '>', '~')
-      else if (ast instanceof AST.SelectorCombinator) {
-        ret =
-          (<AST.SelectorCombinator>ast).getToken().token ===
-          Tokenizer.EToken.WHITESPACE
-            ? ' '
-            : ' ' + (<AST.SelectorCombinator>ast).getToken().src + ' ';
-      }
-
-      // add a trailing space after a selector list
-      else if (ast instanceof AST.SelectorList)
-        ret = trailingSpace(join(descend()));
-      // add a newline before a declaration (if the previous sibling was a declaration)
-      else if (ast instanceof AST.Declaration) {
-        ret = '';
-        if (prevAst instanceof AST.Declaration) ret += newline();
-        ret += join(descend());
-      }
-
-      // trim whitespaces from function arguments
-      else if (ast instanceof AST.FunctionArgumentValue) {
-        ret =
-          Utilities.trim(
-            join((<AST.FunctionArgumentValue>ast).walkChildren(walker)),
-          ) +
-          beautifyToken(
-            (<AST.FunctionArgumentValue>ast).getSeparator(),
-            prevRet,
-          );
-      }
-
-      // trim trailing whitespaces from rules within a rule list
-      else if (ast instanceof AST.RuleList) {
-        if ((<AST.RuleList>ast).getLBrace()) {
-          ret =
-            (<AST.RuleList>ast).getLBrace().walk(walker) +
-            Utilities.trimRight(
-              join((<AST.RuleList>ast).walkChildren(walker)),
-            ) +
-            (<AST.RuleList>ast).getRBrace().walk(walker);
-        } else ret = join(descend());
-      }
-
-      // add a newline after a rule
-      else if (ast instanceof AST.AbstractRule) {
-        if (
-          ast instanceof AST.AtRule &&
-          ((<AST.AtRule>ast).getRules() || (<AST.AtRule>ast).getDeclarations())
-        ) {
-          // add a trailing space after the prelude
-          ret =
-            (<AST.AtRule>ast).getAtKeyword().walk(walker) +
-            trailingSpace((<AST.AtRule>ast).getPrelude().walk(walker));
-
-          // walk the rules/declarations
-          if ((<AST.AtRule>ast).getRules())
-            ret += (<AST.AtRule>ast).getRules().walk(walker);
-          else ret += (<AST.AtRule>ast).getDeclarations().walk(walker);
-        } else ret = join(descend());
-
+      if (token === Tokenizer.EToken.LBRACE) {
+        level++;
         ret += newline();
+      } else if (token === Tokenizer.EToken.RBRACE) {
+        level--;
+        ret = newline() + ret + newline();
       }
+    }
 
-      // default
-      else ret = join(descend());
+    // selector combinators (white spaces, '+', '>', '~')
+    else if (ast instanceof AST.SelectorCombinator) {
+      ret =
+        (<AST.SelectorCombinator>ast).getToken().token ===
+        Tokenizer.EToken.WHITESPACE
+          ? ' '
+          : ' ' + (<AST.SelectorCombinator>ast).getToken().src + ' ';
+    }
 
-      prevAst = ast;
-      prevRet = ret;
-      return ret;
-    }),
-  );
+    // add a trailing space after a selector list
+    else if (ast instanceof AST.SelectorList)
+      ret = trailingSpace(join(descend()));
+    // add a newline before a declaration (if the previous sibling was a declaration)
+    else if (ast instanceof AST.Declaration) {
+      ret = '';
+      if (prevAst instanceof AST.Declaration) ret += newline();
+      ret += join(descend());
+    }
+
+    // trim whitespaces from function arguments
+    else if (ast instanceof AST.FunctionArgumentValue) {
+      ret =
+        Utilities.trim(
+          join((<AST.FunctionArgumentValue>ast).walkChildren(walker)),
+        ) +
+        beautifyToken((<AST.FunctionArgumentValue>ast).getSeparator(), prevRet);
+    }
+
+    // trim trailing whitespaces from rules within a rule list
+    else if (ast instanceof AST.RuleList) {
+      if ((<AST.RuleList>ast).getLBrace()) {
+        ret =
+          (<AST.RuleList>ast).getLBrace().walk(walker) +
+          Utilities.trimRight(join((<AST.RuleList>ast).walkChildren(walker))) +
+          (<AST.RuleList>ast).getRBrace().walk(walker);
+      } else ret = join(descend());
+    }
+
+    // add a newline after a rule
+    else if (ast instanceof AST.AbstractRule) {
+      if (
+        ast instanceof AST.AtRule &&
+        ((<AST.AtRule>ast).getRules() || (<AST.AtRule>ast).getDeclarations())
+      ) {
+        // add a trailing space after the prelude
+        ret =
+          (<AST.AtRule>ast).getAtKeyword().walk(walker) +
+          trailingSpace((<AST.AtRule>ast).getPrelude().walk(walker));
+
+        // walk the rules/declarations
+        if ((<AST.AtRule>ast).getRules())
+          ret += (<AST.AtRule>ast).getRules().walk(walker);
+        else ret += (<AST.AtRule>ast).getDeclarations().walk(walker);
+      } else ret = join(descend());
+
+      ret += newline();
+    }
+
+    // default
+    else ret = join(descend());
+
+    prevAst = ast;
+    prevRet = ret;
+    return ret;
+  };
+
+  return Utilities.trim(node.walk(walker));
 }
 
 function join(arr: any, sep: string = ''): string {
