@@ -12,3 +12,21 @@ export interface TailwindUtility {
   complexProperties?: Record<string, any>;
   dependencies?: string[];
 }
+
+export interface ClassData {
+  name: string;
+  cssProperties: Record<string, string>;
+  values: Record<string, Record<string, string>>;
+  colorReference: string | null;
+  spacingReference: string | null;
+  keyframes: string | null;
+  complexProperties: Record<
+    string,
+    {
+      cssProperties: Record<string, string>;
+      values: Record<string, Record<string, string>>;
+    }
+  >;
+  dependencies: string[];
+  convertToRem: boolean;
+}

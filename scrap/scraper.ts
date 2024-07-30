@@ -1,10 +1,8 @@
 import * as cheerio from 'cheerio';
 import { type TailwindUtility } from './types';
-import {
-  checkFeatureSupport,
-  getArbitraryValueExample,
-  parseTable,
-} from './utils';
+import { checkFeatureSupport } from './lib/checkFeatureSupport';
+import { getArbitraryValueExample } from './lib/getArbitraryValueExample';
+import { parseTable } from './lib/parseTable';
 
 export async function scrapeTailwindClasses(
   url: string,
