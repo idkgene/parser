@@ -9,6 +9,7 @@ export function createDefaultClassData(name: string): ClassData {
     spacingReference: null,
     keyframes: null,
     complexProperties: {},
+    subCategories: {},
     dependencies: [],
     convertToRem: false,
   };

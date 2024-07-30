@@ -26,8 +26,9 @@ export function parseTable($: cheerio.Root): ClassData[] {
     const [baseClass, ...rest] = className.split('-');
     const value = rest.join('-');
 
-    classes[baseClass] =
-      classes[baseClass] || createDefaultClassData(baseClass);
+    if (!classes[baseClass]) {
+      classes[baseClass] = createDefaultClassData(baseClass);
+    }
 
     const cssProperties = parseCSSProperties(properties);
 
@@ -40,5 +41,34 @@ export function parseTable($: cheerio.Root): ClassData[] {
     );
   });
 
-  return Object.values(classes);
+  // Объединяем классы с одинаковым именем
+  const mergedClasses: Record<string, ClassData> = {};
+  Object.values(classes).forEach((cls) => {
+    if (!mergedClasses[cls.name]) {
+      mergedClasses[cls.name] = cls;
+    } else {
+      // Если класс с таким именем уже существует, объединяем свойства
+      Object.assign(mergedClasses[cls.name].cssProperties, cls.cssProperties);
+      Object.assign(mergedClasses[cls.name].values, cls.values);
+      if (cls.colorReference)
+        mergedClasses[cls.name].colorReference = cls.colorReference;
+      if (cls.spacingReference)
+        mergedClasses[cls.name].spacingReference = cls.spacingReference;
+      if (cls.keyframes) mergedClasses[cls.name].keyframes = cls.keyframes;
+      Object.assign(
+        mergedClasses[cls.name].complexProperties,
+        cls.complexProperties,
+      );
+      mergedClasses[cls.name].dependencies = [
+        ...new Set([
+          ...mergedClasses[cls.name].dependencies,
+          ...cls.dependencies,
+        ]),
+      ];
+      mergedClasses[cls.name].convertToRem =
+        mergedClasses[cls.name].convertToRem || cls.convertToRem;
+    }
+  });
+
+  return Object.values(mergedClasses);
 }

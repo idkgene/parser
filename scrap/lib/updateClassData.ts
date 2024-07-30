@@ -7,9 +7,20 @@ export function updateClassData(
   cssProperties: Record<string, string>,
   rawProperties: string,
 ): void {
-  if (['scroll', 'bg', 'text'].includes(baseClass)) {
+  const [subCategory, ...rest] = value.split('-');
+  const subValue = rest.join('-');
+
+  if (classData.subCategories && classData.subCategories[subCategory]) {
+    updateSubCategoryData(
+      classData.subCategories[subCategory],
+      subValue,
+      cssProperties,
+      rawProperties,
+    );
+  } else if (['scroll', 'bg', 'text'].includes(baseClass)) {
     updateComplexProperties(classData, value, cssProperties);
   } else {
+    // Если подкатегории нет, обновляем основной объект
     Object.assign(classData.cssProperties, cssProperties);
     classData.values[value || 'DEFAULT'] = cssProperties;
   }
@@ -29,6 +40,26 @@ export function updateClassData(
   }
 
   classData.convertToRem = Object.values(cssProperties).some((val) =>
+    val.includes('rem'),
+  );
+}
+
+function updateSubCategoryData(
+  subCategory: Omit<ClassData, 'name' | 'subCategories'>,
+  value: string,
+  cssProperties: Record<string, string>,
+  rawProperties: string,
+): void {
+  Object.assign(subCategory.cssProperties, cssProperties);
+  subCategory.values[value || 'DEFAULT'] = cssProperties;
+
+  if (rawProperties.includes('@keyframes')) {
+    subCategory.keyframes = rawProperties;
+  }
+
+  subCategory.dependencies = rawProperties.match(/var\(--tw-[^)]+\)/g) || [];
+
+  subCategory.convertToRem = Object.values(cssProperties).some((val) =>
     val.includes('rem'),
   );
 }
