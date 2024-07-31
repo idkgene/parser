@@ -1,88 +1,76 @@
-import { type ClassData } from '../types';
+import { type ClassData, type CSSPropertyValue } from '../types';
 
 export function updateClassData(
   classData: ClassData,
-  baseClass: string,
   value: string,
-  cssProperties: Record<string, string>,
-  rawProperties: string,
+  cssProperties: CSSPropertyValue[], // Change this to an array of CSSPropertyValue
 ): void {
-  const [subCategory, ...rest] = value.split('-');
-  const subValue = rest.join('-');
+  cssProperties.forEach(({ property, value: propValue }) => {
+    classData.cssProperties.set(property, propValue);
 
-  if (classData.subCategories && classData.subCategories[subCategory]) {
-    updateSubCategoryData(
-      classData.subCategories[subCategory],
-      subValue,
-      cssProperties,
-      rawProperties,
-    );
-  } else if (['scroll', 'bg', 'text'].includes(baseClass)) {
-    updateComplexProperties(classData, value, cssProperties);
-  } else {
-    // Если подкатегории нет, обновляем основной объект
-    Object.assign(classData.cssProperties, cssProperties);
-    classData.values[value || 'DEFAULT'] = cssProperties;
+    if (!classData.values.has(value)) {
+      classData.values.set(value, new Map());
+    }
+    classData.values.get(value)!.set(property, propValue);
+  });
+
+  updateComplexProperties(classData, value, cssProperties);
+  updateMetadata(classData, cssProperties);
+}
+
+function updateComplexProperties(
+  classData: ClassData,
+  value: string,
+  cssProperties: CSSPropertyValue[],
+): void {
+  if (['scroll', 'bg', 'text'].includes(classData.name)) {
+    const [subProperty, ...subValueParts] = value.split('-');
+    const subValue = subValueParts.join('-');
+
+    if (!classData.complexProperties.has(subProperty)) {
+      classData.complexProperties.set(subProperty, {
+        cssProperties: new Map(),
+        values: new Map(),
+      });
+    }
+
+    const complexProp = classData.complexProperties.get(subProperty)!;
+    cssProperties.forEach(({ property, value }) => {
+      complexProp.cssProperties.set(property, value);
+      if (!complexProp.values.has(subValue)) {
+        complexProp.values.set(subValue, new Map());
+      }
+      complexProp.values.get(subValue)!.set(property, value);
+    });
   }
+}
+
+function updateMetadata(
+  classData: ClassData,
+  cssProperties: CSSPropertyValue[],
+): void {
+  const rawProperties = cssProperties
+    .map(({ property, value }) => `${property}: ${value}`)
+    .join('; ');
 
   if (rawProperties.includes('@keyframes')) {
     classData.keyframes = rawProperties;
   }
 
-  classData.dependencies = rawProperties.match(/var\(--tw-[^)]+\)/g) || [];
+  cssProperties.forEach(({ value }) => {
+    const deps = value.match(/var\(--tw-[^)]+\)/g) || [];
+    deps.forEach((dep) => classData.dependencies.add(dep));
+  });
 
-  if (['bg', 'text', 'border'].includes(baseClass)) {
-    classData.colorReference = value;
+  if (['bg', 'text', 'border'].includes(classData.name)) {
+    classData.colorReference = true;
   }
 
-  if (['p', 'm', 'gap', 'space'].includes(baseClass)) {
-    classData.spacingReference = value;
+  if (['p', 'm', 'gap', 'space'].includes(classData.name)) {
+    classData.spacingReference = true;
   }
 
-  classData.convertToRem = Object.values(cssProperties).some((val) =>
-    val.includes('rem'),
+  classData.convertToRem = cssProperties.some(({ value }) =>
+    value.includes('rem'),
   );
-}
-
-function updateSubCategoryData(
-  subCategory: Omit<ClassData, 'name' | 'subCategories'>,
-  value: string,
-  cssProperties: Record<string, string>,
-  rawProperties: string,
-): void {
-  Object.assign(subCategory.cssProperties, cssProperties);
-  subCategory.values[value || 'DEFAULT'] = cssProperties;
-
-  if (rawProperties.includes('@keyframes')) {
-    subCategory.keyframes = rawProperties;
-  }
-
-  subCategory.dependencies = rawProperties.match(/var\(--tw-[^)]+\)/g) || [];
-
-  subCategory.convertToRem = Object.values(cssProperties).some((val) =>
-    val.includes('rem'),
-  );
-}
-
-export function updateComplexProperties(
-  classData: ClassData,
-  value: string,
-  cssProperties: Record<string, string>,
-): void {
-  const [subProperty, ...subValueParts] = value.split('-');
-  const subValue = subValueParts.join('-');
-
-  classData.complexProperties[subProperty] = classData.complexProperties[
-    subProperty
-  ] || {
-    cssProperties: {},
-    values: {},
-  };
-
-  Object.assign(
-    classData.complexProperties[subProperty].cssProperties,
-    cssProperties,
-  );
-  classData.complexProperties[subProperty].values[subValue || 'DEFAULT'] =
-    cssProperties;
 }

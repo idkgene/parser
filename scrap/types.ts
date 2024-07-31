@@ -1,39 +1,41 @@
-export interface TailwindUtility {
-  name: string;
-  cssProperties: Record<string, string>;
-  values: Record<string, Record<string, string>>;
-  allowArbitrary: boolean;
-  allowStates: boolean;
-  allowBreakpoints: boolean;
-  convertToRem: boolean;
-  themeKey?: string;
-  arbitraryFormat?: string;
-  keyframes?: string;
-  complexProperties?: Record<
-    string,
-    {
-      cssProperties: Record<string, string>;
-      values: Record<string, Record<string, string>>;
-    }
-  >;
-  dependencies?: string[];
+export interface CSSPropertyValue {
+  property: string;
+  value: string;
 }
 
 export interface ClassData {
   name: string;
-  cssProperties: Record<string, string>;
-  values: Record<string, Record<string, string>>;
-  colorReference: string | null;
-  spacingReference: string | null;
-  keyframes: string | null;
-  complexProperties: Record<
-    string,
-    {
-      cssProperties: Record<string, string>;
-      values: Record<string, Record<string, string>>;
-    }
-  >;
-  subCategories?: Record<string, Omit<ClassData, 'name' | 'subCategories'>>;
-  dependencies: string[];
+  cssProperties: Map<string, string>;
+  values: Map<string, Map<string, string>>;
+  allowArbitrary: boolean;
+  allowStates: boolean;
+  allowBreakpoints: boolean;
   convertToRem: boolean;
+  complexProperties: Map<string, ComplexProperty>;
+  dependencies: Set<string>;
+  keyframes?: string;
+  colorReference?: boolean;
+  spacingReference?: boolean;
+  arbitraryFormat?: string;
 }
+
+export interface ComplexProperty {
+  cssProperties: Map<string, string>;
+  values: Map<string, Map<string, string>>;
+}
+
+export type CategoryName =
+  | 'Layout'
+  | 'Flexbox & Grid'
+  | 'Sizing'
+  | 'Typography'
+  | 'Backgrounds'
+  | 'Borders'
+  | 'Effects'
+  | 'Filters'
+  | 'Tables'
+  | 'Transitions & Animation'
+  | 'Transforms'
+  | 'Interactivity'
+  | 'SVG'
+  | 'Accessibility';

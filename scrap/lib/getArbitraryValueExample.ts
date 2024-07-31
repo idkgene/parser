@@ -1,3 +1,5 @@
+import * as cheerio from 'cheerio';
+
 export function getArbitraryValueExample($: cheerio.Root): string | null {
   const arbitrarySection = $('#arbitrary-values');
   if (arbitrarySection.length) {

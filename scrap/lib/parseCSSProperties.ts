@@ -1,13 +1,11 @@
-export function parseCSSProperties(properties: string): Record<string, string> {
+import type { CSSPropertyValue } from '../types';
+
+export function parseCSSProperties(properties: string): CSSPropertyValue[] {
   return properties
     .split(';')
     .filter((prop) => prop.includes(':'))
-    .reduce(
-      (acc, prop) => {
-        const [property, value] = prop.split(':').map((s) => s.trim());
-        acc[property] = value;
-        return acc;
-      },
-      {} as Record<string, string>,
-    );
+    .map((prop) => {
+      const [property, value] = prop.split(':').map((s) => s.trim());
+      return { property, value };
+    });
 }
