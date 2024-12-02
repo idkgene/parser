@@ -1,4 +1,4 @@
-import type { FrameworkOptions } from '@tailwind-optimizer/shared';
+import type { FrameworkOptions } from '@taily/shared';
 import { ReactFramework } from './react';
 import { VueFramework } from './vue';
 import { SvelteFramework } from './svelte';

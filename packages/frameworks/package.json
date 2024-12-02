@@ -1,5 +1,5 @@
 {
-  "name": "@tailwind-optimizer/frameworks",
+  "name": "@taily/frameworks",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -21,7 +21,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@tailwind-optimizer/shared": "workspace:*"
+    "@taily/shared": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.17.9",

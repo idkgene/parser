@@ -2,7 +2,7 @@ import {
     type FrameworkConfig, 
     type FrameworkOptions,
     type FrameworkFeature
-} from '@tailwind-optimizer/shared';
+} from '@taily/shared';
 import type { FrameworkHandler } from './types';
 
 export abstract class BaseFramework implements FrameworkHandler {

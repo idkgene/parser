@@ -1,6 +1,6 @@
 import { parentPort } from 'worker_threads';
-import type { WorkerMessage, ProcessFileOptions } from '@tailwind-optimizer/shared';
-import { FrameworkFactory } from '@tailwind-optimizer/frameworks';
+import type { WorkerMessage, ProcessFileOptions } from '@taily/shared';
+import { FrameworkFactory } from '@taily/frameworks';
 
 if (!parentPort) {
     throw new Error('This file must be run as a worker thread');

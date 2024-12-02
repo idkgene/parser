@@ -1,5 +1,5 @@
 {
-  "name": "@tailwind-optimizer/parser",
+  "name": "@taily/parser",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -21,8 +21,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@tailwind-optimizer/shared": "workspace:*",
-    "@tailwind-optimizer/frameworks": "workspace:*",
+    "@taily/shared": "workspace:*",
+    "@taily/frameworks": "workspace:*",
     "fast-glob": "^3.3.2",
     "lightningcss": "^1.28.2",
     "postcss": "^8.4.49",

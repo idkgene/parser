@@ -2,7 +2,7 @@ import {
     type ParserOptions,
     type CacheEntry,
     PERFORMANCE_CONFIG
-} from '@tailwind-optimizer/shared';
+} from '@taily/shared';
 import { createHash } from 'crypto';
 import { promises as fs } from 'fs';
 import path from 'path';

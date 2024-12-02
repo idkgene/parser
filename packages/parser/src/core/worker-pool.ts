@@ -6,7 +6,7 @@ import {
     type WorkerMetrics,
     type ProcessFileOptions,
     PERFORMANCE_CONFIG
-} from '@tailwind-optimizer/shared';
+} from '@taily/shared';
 import path from 'path';
 
 interface WorkerInfo {

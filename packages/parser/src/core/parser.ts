@@ -4,8 +4,8 @@ import {
     type ProcessResult,
     type FrameworkType,
     PERFORMANCE_CONFIG
-} from '@tailwind-optimizer/shared';
-import { FrameworkFactory, FrameworkDetector } from '@tailwind-optimizer/frameworks';
+} from '@taily/shared';
+import { FrameworkFactory, FrameworkDetector } from '@taily/frameworks';
 import { WorkerPool } from './worker-pool';
 import { Cache } from './cache';
 import { ConfigValidator } from './config-validator';

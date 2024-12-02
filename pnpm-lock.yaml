@@ -38,10 +38,10 @@ importers:
 
   packages/cli:
     dependencies:
-      '@tailwind-optimizer/parser':
+      '@taily/parser':
         specifier: workspace:*
         version: link:../parser
-      '@tailwind-optimizer/shared':
+      '@taily/shared':
         specifier: workspace:*
         version: link:../shared
       chalk:
@@ -108,7 +108,7 @@ importers:
 
   packages/frameworks:
     dependencies:
-      '@tailwind-optimizer/shared':
+      '@taily/shared':
         specifier: workspace:*
         version: link:../shared
     devDependencies:
@@ -127,10 +127,10 @@ importers:
 
   packages/parser:
     dependencies:
-      '@tailwind-optimizer/frameworks':
+      '@taily/frameworks':
         specifier: workspace:*
         version: link:../frameworks
-      '@tailwind-optimizer/shared':
+      '@taily/shared':
         specifier: workspace:*
         version: link:../shared
       fast-glob:

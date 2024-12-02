@@ -1,5 +1,5 @@
 import { FrameworkFactory } from './factory';
-import type { FrameworkDetectorOptions } from '@tailwind-optimizer/shared';
+import type { FrameworkDetectorOptions } from '@taily/shared';
 
 export class FrameworkDetector {
     private factory: FrameworkFactory;

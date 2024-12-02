@@ -1,4 +1,4 @@
-import type { FrameworkFeature } from '@tailwind-optimizer/shared';
+import type { FrameworkFeature } from '@taily/shared';
 
 export interface FrameworkHandler {
     name: string;

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { ParserOptions } from '@tailwind-optimizer/shared';
+import type { ParserOptions } from '@taily/shared';
 import { promises as fs } from 'fs';
 import path from 'path';
 

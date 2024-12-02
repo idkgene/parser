@@ -3,7 +3,7 @@
 export const DEFAULT_CONFIG = {
     cache: {
         enabled: true,
-        directory: '.tailwind-optimizer-cache',
+        directory: '.taily-cache',
         ttl: 3600 // 1 hour
     },
     worker: {

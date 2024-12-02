@@ -5,7 +5,7 @@ import type {
     FrameworkOptions,
     FrameworkDetectorOptions,
     FrameworkFeature
-} from '@tailwind-optimizer/shared';
+} from '@taily/shared';
 import type { FrameworkHandler } from './types';
 
 export class AstroFramework extends BaseFramework implements FrameworkHandler {
