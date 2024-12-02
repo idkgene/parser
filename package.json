@@ -1,23 +1,47 @@
 {
-  "name": "parser",
+  "name": "tailwind-optimizer",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "prettier": "@vercel/style-guide/prettier",
+  "private": true,
+  "description": "High-performance Tailwind CSS parsing and optimization tool",
+  "type": "module",
   "scripts": {
-    "start": "ts-node mapping.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.2"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "update-deps": "taze major -w",
+    "typecheck": "turbo run typecheck",
+    "build:watch": "turbo run build -- --watch",
+    "test:watch": "turbo run test -- --watch",
+    "prepare": "husky install",
+    "preinstall": "npx only-allow pnpm",
+    "setup": "node scripts/setup.js"
   },
   "devDependencies": {
-    "@vercel/style-guide": "^6.0.0",
-    "eslint": "^9.6.0",
-    "prettier": "^3.3.2"
+    "@commitlint/cli": "^18.6.1",
+    "@commitlint/config-conventional": "^18.6.3",
+    "@types/node": "^20.17.9",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.4.1",
+    "taze": "^0.18.0",
+    "tsup": "^8.3.5",
+    "turbo": "^2.3.3"
+  },
+  "packageManager": "pnpm@8.14.1",
+  "engines": {
+    "node": ">=16.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
   }
 }

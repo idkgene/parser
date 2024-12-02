@@ -1,25 +1,17 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
+    "target": "es2020",
+    "module": "commonjs",
+    "lib": ["es2020"],
     "strict": true,
-    "typeRoots": ["node_modules/@types"],
-    "noEmit": true,
-    "declaration": true,
-    "declarationMap": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "outDir": "dist",
-    "sourceMap": true,
-    "moduleResolution": "Bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
     "skipLibCheck": true,
-    "paths": {
-      "@/*": ["./*"]
-    }
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": true,
+    "sourceMap": true
   },
-  "extends": "@vercel/style-guide/typescript/node18"
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
